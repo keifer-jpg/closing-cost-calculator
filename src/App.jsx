@@ -45,8 +45,6 @@ function F({label,value,onChange,type="text",prefix,suffix,options,step,span2,sm
 
 // Linked % + $ field: auto-fills from %, but agent can override $
 function PctDollarField({label,pct,onPctChange,dollar,onDollarChange,baseAmount}){
-  const autoVal = baseAmount*(parseFloat(pct)||0)/100;
-  const isOverridden = Math.abs((parseFloat(dollar)||0)-autoVal)>0.50;
   return(<div style={{marginBottom:"10px",gridColumn:"1 / -1"}}>
     <label style={{display:"block",fontSize:"11px",fontWeight:600,color:C.lt,marginBottom:"3px",textTransform:"uppercase",letterSpacing:"0.4px"}}>{label}</label>
     <div style={{display:"flex",gap:"8px"}}>
@@ -59,12 +57,11 @@ function PctDollarField({label,pct,onPctChange,dollar,onDollarChange,baseAmount}
       <div style={{position:"relative",flex:1}}>
         <span style={{position:"absolute",left:"10px",top:"50%",transform:"translateY(-50%)",color:C.lt,fontSize:"13px",pointerEvents:"none"}}>$</span>
         <input type="number" value={dollar}
-          onChange={e=>onDollarChange(e.target.value)}
-          style={{width:"100%",padding:"8px 10px 8px 26px",border:`1px solid ${isOverridden?"#f59e0b":C.bdr}`,borderRadius:"8px",fontSize:"14px",
-            background:isOverridden?"#fffbeb":"#fff",color:C.text,boxSizing:"border-box",outline:"none"}}/>
+          onChange={e=>{onDollarChange(e.target.value);if(baseAmount>0)onPctChange(String(Math.round((parseFloat(e.target.value)||0)/baseAmount*10000)/100));}}
+          style={{width:"100%",padding:"8px 10px 8px 26px",border:`1px solid ${C.bdr}`,borderRadius:"8px",fontSize:"14px",
+            background:"#fff",color:C.text,boxSizing:"border-box",outline:"none"}}/>
       </div>
     </div>
-    {isOverridden&&<div style={{fontSize:"10px",color:"#d97706",marginTop:"2px"}}>Manual override — not using % calc</div>}
   </div>);
 }
 
